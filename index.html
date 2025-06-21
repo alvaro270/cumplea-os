@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>¡Una Sorpresa para Naiara! 🎉</title>
+    <style>
+      :root {
+        --orange-primary: #ff8c42;
+        --orange-secondary: #ffa726;
+        --orange-dark: #d84315;
+        --text-light: #ffffff;
+        --text-dark: #333;
+        --bg-light: rgba(255, 255, 255, 0.95);
+        --morat-bg: linear-gradient(135deg, #2c3e50, #34495e, #5d6d7e);
+        --blackpink-bg: linear-gradient(135deg, #ff1744, #e91e63, #ad1457);
+        --player-bg: #f5f5f7;
+        --player-text: #1d1d1f;
+        --slider-track: #e5e5e5;
+        --slider-thumb: #a0a0a0;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--orange-primary),
+          var(--orange-secondary),
+          #ffb74d
+        );
+        min-height: 100vh;
+        overflow-x: hidden;
+        transition: background 1s ease;
+      }
+      body.morat-theme {
+        background: var(--morat-bg);
+      }
+      body.blackpink-theme {
+        background: var(--blackpink-bg);
+      }
+
+      /* --- Pantalla de Regalo (sin cambios) --- */
+      .gift-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+      }
+      #giftImage {
+        width: 250px;
+        height: auto;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.3));
+      }
+      #giftImage:hover {
+        transform: scale(1.05);
+      }
+      #giftImage.shake {
+        animation: shake 0.5s ease-in-out;
+      }
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-8px) rotate(-2deg);
+        }
+        75% {
+          transform: translateX(8px) rotate(2deg);
+        }
+      }
+      .gift-text {
+        color: var(--text-light);
+        font-size: 28px;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        margin-top: 20px;
+      }
+      .click-counter {
+        color: var(--text-light);
+        font-size: 18px;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 10px 20px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        margin-bottom: 30px;
+      }
+
+      /* --- Contenido Principal (sin cambios) --- */
+      .fireworks {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1000;
+      }
+      .firework {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--orange-primary);
+        animation: firework-anim 2s ease-out forwards;
+      }
+      @keyframes firework-anim {
+        0% {
+          transform: translateY(100vh) scale(0);
+          opacity: 1;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(20vh) scale(12);
+          opacity: 0;
+        }
+      }
+      .main-content {
+        display: none;
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .section {
+        background: var(--bg-light);
+        margin: 30px 0;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+      .section h2 {
+        color: var(--orange-dark);
+        font-size: 32px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      /* --- NUEVO REPRODUCTOR DE MÚSICA MEJORADO --- */
+      .music-section {
+        text-align: center;
+      }
+      .music-player {
+        background-color: var(--player-bg);
+        border-radius: 15px;
+        padding: 25px;
+        max-width: 450px;
+        margin: 20px auto;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        text-align: left;
+        transition: background-color 0.5s ease;
+      }
+      .player-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      #albumArt {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.5s ease;
+        object-fit: cover;
+      }
+      .song-details {
+        flex-grow: 1;
+      }
+      .song-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--player-text);
+      }
+      .artist-name {
+        font-size: 16px;
+        color: #888;
+      }
+
+      /* Barra de progreso y tiempos */
+      .progress-container {
+        margin-top: 20px;
+        cursor: pointer;
+      }
+      .progress-bar-bg {
+        width: 100%;
+        height: 5px;
+        background-color: var(--slider-track);
+        border-radius: 5px;
+      }
+      #progressBar {
+        width: 0%;
+        height: 100%;
+        background-color: var(--slider-thumb);
+        border-radius: 5px;
+      }
+      .time-stamps {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #888;
+        margin-top: 5px;
+      }
+
+      /* Controles: Play/Pause y Volumen */
+      .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+      }
+      #playPauseBtn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        width: 50px;
+        height: 50px;
+      }
+      #playPauseBtn svg {
+        width: 100%;
+        height: 100%;
+        fill: var(--player-text);
+      }
+      #pauseIcon {
+        display: none;
+      } /* Oculto por defecto */
+      .volume-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .volume-control svg {
+        width: 20px;
+        height: 20px;
+        fill: #888;
+      }
+      #volumeSlider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100px;
+        height: 5px;
+        background: var(--slider-track);
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      #volumeSlider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 15px;
+        height: 15px;
+        background: var(--slider-thumb);
+        border-radius: 50%;
+      }
+      #volumeSlider::-moz-range-thumb {
+        width: 15px;
+        height: 15px;
+        background: var(--slider-thumb);
+        border-radius: 50%;
+        border: none;
+      }
+
+      /* Playlist (sin cambios mayores) */
+      .playlist-container {
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 40px;
+      }
+      .playlist {
+        background: linear-gradient(
+          135deg,
+          var(--orange-primary),
+          var(--orange-secondary)
+        );
+        padding: 20px;
+        border-radius: 15px;
+        color: white;
+        min-width: 300px;
+      }
+      .playlist h3 {
+        margin-bottom: 15px;
+        font-size: 24px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+        padding-bottom: 10px;
+      }
+      .song-list {
+        list-style: none;
+      }
+      .song-list li {
+        background: rgba(255, 255, 255, 0.2);
+        margin: 10px 0;
+        padding: 12px 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .song-list li:before {
+        content: "▶";
+        font-size: 12px;
+      }
+      .song-list li:hover {
+        background: rgba(255, 255, 255, 0.4);
+        transform: scale(1.03);
+      }
+
+      /* Secciones de Mensajes y Timeline (sin cambios) */
+      .message-section .main-message {
+        font-size: 24px;
+        line-height: 1.6;
+        color: var(--orange-dark);
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 30px;
+        background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+        border-radius: 15px;
+        border-left: 5px solid var(--orange-primary);
+      }
+      .message-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 30px 0;
+      }
+      .message-btn {
+        padding: 15px 30px;
+        background: linear-gradient(
+          135deg,
+          var(--orange-primary),
+          var(--orange-secondary)
+        );
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+      .message-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      }
+      .message-btn.special {
+        background: linear-gradient(135deg, var(--orange-dark), #ff6b35);
+      }
+      .expandable-message {
+        display: none;
+        margin-top: 20px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        border-left: 4px solid var(--orange-primary);
+        animation: slideDown 0.5s ease;
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      /* --- TIMELINE CON IMÁGENES --- */
+      .timeline { position: relative; padding: 20px 0; }
+      .timeline::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background: linear-gradient(to bottom, var(--orange-primary), var(--orange-secondary)); transform: translateX(-50%); }
+      .timeline-item { position: relative; margin: 40px 0; padding: 20px; background: rgba(255,255,255,0.9); border-radius: 15px; width: 45%; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+      .timeline-item:nth-child(odd) { margin-left: 0; }
+      .timeline-item:nth-child(even) { margin-left: 55%; }
+      .timeline-item::before { content: ""; position: absolute; top: 20px; width: 20px; height: 20px; background: var(--orange-primary); border-radius: 50%; border: 4px solid white; box-shadow: 0 0 0 4px var(--orange-primary); }
+      .timeline-item:nth-child(odd)::before { right: -45px; }
+      .timeline-item:nth-child(even)::before { left: -45px; }
+      .timeline-date { color: var(--orange-dark); font-weight: bold; font-size: 18px; margin-bottom: 10px; }
+      /* NUEVO ESTILO PARA LA IMAGEN DEL TIMELINE */
+      .timeline-image {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      }
+      .timeline-content { font-size: 16px; line-height: 1.5; color: var(--text-dark); }
+      
+      /* NUEVO BOTÓN DE CUMPLEAÑOS */
+      .birthday-btn {
+        padding: 12px 25px;
+        background: linear-gradient(135deg, #28a745, #218838);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        display: block;
+        margin: -10px auto 30px auto;
+      }
+      .birthday-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+      @media (max-width: 768px) {
+        .playlist-container,
+        .message-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+        .timeline::before {
+          left: 30px;
+        }
+        .timeline-item {
+          width: calc(100% - 80px);
+          margin-left: 60px !important;
+        }
+        .timeline-item::before {
+          left: -45px !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <audio id="audioPlayer"></audio>
+    <audio id="birthdayAudioPlayer" src="music/happy-birthday.mp3" preload="auto"></audio>
+
+    <div id="giftContainer" class="gift-container">
+      <div class="click-counter" id="clickCounter">
+        Haz clic 6 veces para abrir el regalo 🎁
+      </div>
+      <img src="assets/images/regalo.png" alt="Caja de Regalo" id="giftImage" />
+      <div class="gift-text">¡Toca el regalo para abrirlo!</div>
+    </div>
+
+    <div id="mainContent" class="main-content">
+      <div class="section music-section">
+        <h2>🎵 Tu Música Favorita 🎵</h2>
+        <div class="music-player">
+          <div class="player-info">
+            <img src="assets/images/disco.gif" alt="Album Art" id="albumArt" />
+            <div class="song-details">
+              <div class="song-title" id="songTitle">Elige una canción</div>
+              <div class="artist-name" id="artistName">
+                La música comenzará a sonar...
+              </div>
+            </div>
+          </div>
+          <div class="progress-container" id="progressContainer">
+            <div class="progress-bar-bg">
+              <div id="progressBar"></div>
+            </div>
+          </div>
+          <div class="time-stamps">
+            <span id="currentTime">0:00</span>
+            <span id="totalDuration">0:00</span>
+          </div>
+
+          <div class="controls">
+            <button id="playPauseBtn">
+              <svg id="playIcon" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"></path>
+              </svg>
+              <svg id="pauseIcon" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+              </svg>
+            </button>
+            <div class="volume-control">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+                ></path>
+              </svg>
+              <input
+                type="range"
+                id="volumeSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="1"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="playlist-container">
+          <div class="playlist">
+            <h3>🎸 Morat</h3>
+            <ul class="song-list">
+              <li
+                onclick="playSong('morat', 'Cómo Te Atreves', '/music/morat/como-te-atreves.mp3', 'assets/images/morat.jpg')"
+              >
+                Cómo Te Atreves
+              </li>
+              <li
+                onclick="playSong('morat', 'Besos En Guerra', '/music/morat/besos-en-guerra.mp3', 'assets/images/morat.jpg')"
+              >
+                Besos En Guerra
+              </li>
+              <li
+                onclick="playSong('morat', 'Cuando Nadie Ve', '/music/morat/cuando-nadie-ve.mp3', 'assets/images/morat.jpg')"
+              >
+                Cuando Nadie Ve
+              </li>
+            </ul>
+          </div>
+          <div class="playlist">
+            <h3>🖤💖 BLACKPINK</h3>
+            <ul class="song-list">
+              <li
+                onclick="playSong('blackpink', 'DDU-DU DDU-DU', '/music/blackpink/ddu-du.mp3', 'assets/images/blackpink.jpg')"
+              >
+                DDU-DU DDU-DU
+              </li>
+              <li
+                onclick="playSong('blackpink', 'Kill This Love', '/music/blackpink/kill-this-love.mp3', 'assets/images/blackpink.jpg')"
+              >
+                Kill This Love
+              </li>
+              <li
+                onclick="playSong('blackpink', 'How You Like That', '/music/blackpink/how-you-like-that.mp3', 'assets/images/blackpink.jpg')"
+              >
+                How You Like That
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="section message-section">
+        <h2>💌 ¡Feliz Cumpleaños Naiara! 💌</h2>
+        <div class="main-message">
+          ¡Bienvenida a la mayoría de edad! 🎉<br /><br />
+          Que este nuevo capítulo esté lleno de aventuras increíbles,<br />
+          sueños cumplidos y mucha felicidad.<br /><br />
+          🎓 ¡Felicidades por completar tu FP en Pastelería! 🧁<br />
+          Estoy seguro de que harás pasteles tan dulces como tú.
+        </div>
+        <div class="message-buttons">
+          <button class="message-btn" onclick="toggleMessage('felicitaciones')">
+            🎉 Mis Felicitaciones
+          </button>
+          <button class="message-btn" onclick="toggleMessage('consejos')">
+            💡 Mis Consejos para los 18
+          </button>
+          <button
+            class="message-btn special"
+            onclick="toggleMessage('especial')"
+          >
+            ✨ Un Mensaje Especial para Ti ✨
+          </button>
+        </div>
+        <div id="felicitaciones" class="expandable-message">
+          <h4>🎊 Mis Felicitaciones 🎊</h4>
+          <ul style="list-style: none; padding-left: 0">
+            <li>
+              🌟 Felicidades por terminar esta etapa de tu Formación
+              Profesional. Sé cuánto esfuerzo pusiste, incluso cuando a veces
+              dudabas de ti.
+            </li>
+            <li>
+              🌟 Llegar hasta aquí no fue fácil, pero lo hiciste y eso dice
+              mucho de tu determinación.
+            </li>
+            <li>
+              🌟 No todos logran avanzar cuando tienen dificultades personales,
+              pero tú lo hiciste.
+            </li>
+            <li>
+              🌟 Te animo a seguir con ese mismo valor para empezar el siguiente
+              nivel en septiembre.
+            </li>
+            <li>🌟 Cree en tu capacidad, incluso cuando nadie más lo haga.</li>
+            <li>🌟 Tus sueños sí valen la pena, y tú también.</li>
+            <li>
+              🌟 No te detengas. El camino que estás construyendo es solo el
+              inicio de algo más grande.
+            </li>
+          </ul>
+        </div>
+        <div id="consejos" class="expandable-message">
+          <h4>📝 Mis Consejos para los 18 📝</h4>
+          <ul style="list-style: none; padding-left: 0">
+            <li>
+              🔥 No tomes decisiones importantes desde la tristeza o la soledad.
+              Espera a estar en calma.
+            </li>
+            <li>
+              🔥 Rodéate de personas que te respeten, no solo que te distraigan.
+            </li>
+            <li>
+              🔥 Confía en tus instintos. Si algo te incomoda o genera duda, es
+              por algo.
+            </li>
+            <li>
+              🔥 Valórate lo suficiente para no aceptar menos de lo que mereces.
+            </li>
+            <li>
+              🔥 Está bien equivocarse, pero no repitas errores por costumbre.
+            </li>
+            <li>
+              🔥 Cuida tu cuerpo y tu salud mental, son tu hogar permanente.
+            </li>
+            <li>
+              🔥 No confundas atención con amor. El amor también respeta,
+              escucha y construye.
+            </li>
+            <li>
+              🔥 Permítete sanar antes de volver a empezar con alguien más.
+            </li>
+            <li>
+              🔥 Ten metas propias que no dependan de nadie. Tu futuro es tuyo.
+            </li>
+            <li>
+              🔥 Hazle caso a las versiones más sabias de ti, no a las más
+              impulsivas.
+            </li>
+          </ul>
+        </div>
+        <div id="especial" class="expandable-message">
+          <h4>✨ Un Mensaje Especial ✨</h4>
+          <p style="font-size: 18px; line-height: 1.6; color: #d84315">
+            Querida Naiara,<br /><br />Hoy cumples 18 años, y aunque ya no
+            estamos como antes, quiero que sepas que sigo deseándote lo mejor.
+            Te admiro por cómo enfrentas tantas cosas a pesar de todo lo que has
+            vivido, y hoy más que nunca quiero recordarte lo fuerte y valiosa
+            que eres.<br /><br /> Has cerrado una etapa terminando tu primer ciclo en
+            repostería, y en unos meses iniciarás otra. No cualquiera llega
+            hasta donde tú has llegado con tanta entrega. Que este nuevo año de
+            vida te acerque a la mujer que sueñas ser: valiente, libre, feliz. <br /><br />
+            Aunque el rumbo que tomamos haya cambiado, siempre vas a tener en mí
+            a alguien que te desea cosas buenas. Y hoy, más que un feliz
+            cumpleaños, te deseo un <strong>futuro lleno de amor propio, seguridad y
+            momentos que te hagan sonreír de verdad.</strong><br /><br /> Disfruta este día,
+            celébrate y no olvides que crecer no significa endurecerse, sino
+            aprender a vivir con el corazón más sabio.<br /><br />Con todo mi
+            cariño,<br /> Alguien que cree en ti 🤞
+          </p>
+        </div>
+      </div>
+      <div class="section">
+        <h2>📅 Momentos Importantes 📅</h2>
+        <button id="playBirthdaySongBtn" class="birthday-btn">🎉 ¡Toca para una sorpresa musical! 🎉</button>
+        <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-date">2007</div>
+                <img src="assets/images/timeline/naiara-niña.jpg" alt="1" class="timeline-image">
+                <div class="timeline-content">
+                  <strong>De niña</strong><br>Tan inocente y curiosa, siempre con una sonrisa. 😊
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-date">2023/04</div>
+                <img src="assets/images/timeline/jugando-roblox.jpg" alt="Graduación" class="timeline-image">
+                <div class="timeline-content">
+                  <strong>Cuando nos conocimos en Roblox</strong><br> Fue algo imprevisto pero considero que cambio la vida para bien a ambos. 🤗
+                </div>
+              </div>
+              
+              <div class="timeline-item">
+                <div class="timeline-date">2023/05/21</div>
+                <img src="assets/images/timeline/juego.jpg" alt="2 Cumpleaños" class="timeline-image">
+                <div class="timeline-content">
+                  <strong>Conociendo Zepeto</strong><br>Luego de conocernos compartimos mucho mas tiempo y fuimos explorando nuevos juegos diferentes, uno de ellos es Zepeto 🎮</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">2023/05/25</div>
+                <img src="assets/images/timeline/dibujos.jpg" alt="3" class="timeline-image">
+                <div class="timeline-content">
+                  <strong>Tienes arte en tus manos</strong><br>En tu tiempo en la UET hiciste dibujos y diseños que me dejaron impresionado, tienes un talento increíble. 🎨
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">2023/06</div>
+                <img src="assets/images/timeline/videollamada.jpg" alt="4" class="timeline-image">
+                <div class="timeline-content">
+                  <strong>Primera video llamada</strong><br> Apesar de las inseguridades que sentias de ti al principio, te demostre que eres una persona hermosa por dentro y por fuera, y que no tienes nada de que avergonzarte. 🤞
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">2024/04</div>
+                <img src="assets/images/timeline/vrchat.jpg" alt="5" class="timeline-image">
+                <div class="timeline-content">
+                  <strong>Te enseñe VrChat</strong><br>Recuerdo que querias tanto tener las gafas de realidad virtual, y que cuando la compraron, te emocionaste tanto que empezaste a jugar primero a Roblox VR, pero luego te enseñe el juego llamado VRChat y desde ahi no podías dejar de jugar, y me alegra que hayas podido disfrutar de esa experiencia. 🥳
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">2024/06</div>
+                <img src="assets/images/timeline/peluches.jpg" alt="6" class="timeline-image">
+                <div class="timeline-content">
+                  <strong>Regalos</strong><br> Tanto tu como yo en nuestros cumpleaños nos hemos regalado cosas que nos han hecho felices acompañandonos en nuestro dia a dia. 🎁
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">2024/06/21</div>
+                <img src="assets/images/timeline/concierto-morat.jpg" alt="7" class="timeline-image">
+                <div class="timeline-content">
+                  <strong>Concierto de Morat</strong><br> Recuerdo que estabas muy emocionada por ir al concierto de Morat, y al llegar cantaste todas sus canciones hasta cansar tu garganta jaja. Verlos en vivo fue una experiencia inolvidable para ti, y me alegra que hayas podido disfrutarlo tanto. 🎶
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">2024/07/03</div>
+                <img src="assets/images/timeline/vrchat-2.jpg" alt="8" class="timeline-image">
+                <div class="timeline-content">
+                  <strong>Pasamos tantas aventuras</strong><br> Explorando dentro de VRChat, desde mundos de terror hasta mundos de fantasía, siempre encontrando algo nuevo y divertido. 🏰
+                </div>
+              </div>
+              
+              <div class="timeline-item">
+                <div class="timeline-date">2024/07/29</div>
+                <img src="assets/images/timeline/cherry.jpg" alt="9" class="timeline-image">
+                <div class="timeline-content">
+                  <strong>Cherry</strong><br>La Cherry siendo Cherry jajaja 🍒🐾
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">2024/10</div>
+                <img src="assets/images/timeline/postre.jpg" alt="10" class="timeline-image">
+                <div class="timeline-content">
+                  <strong>Unos de tus primeros postres</strong><br>Recuerdo que estabas muy emocionada y nerviosa por empezar tu formación profesional en repostería, y aunque al principio te costó un poco, lograste adaptarte y aprender tanto. Estoy seguro de que serás una gran pastelera. 🎂
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">2024/12/09</div>
+                <img src="assets/images/timeline/primer-dia.jpg" alt="11" class="timeline-image">
+                <div class="timeline-content">
+                  <strong>El encuentro</strong><br> Apesar de ya conocernos por muchos meses, el momento de vernos cara a cara fue algo que nunca olvidare y se quedo marcado en mi memoria, y espero que para ti tambien. 😊
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">2024/12/31</div>
+                <img src="assets/images/timeline/año-nuevo.jpg" alt="12" class="timeline-image">
+                <div class="timeline-content">
+                  <strong>Navidad y Año nuevo</strong><br> Celebramos juntos la navidad y el año nuevo, compartiendo momentos especiales, unicos que solo nosotros sabemos y creando recuerdos que atesoraremos para siempre. 🎄🥳
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">Actualidad</div>
+                <!-- <img src="assets/images/timeline/naia-18.jpg" alt="12" class="timeline-image"> -->
+                <div class="timeline-content">
+                  <strong>El futuro es incierto</strong><br> Puede que las cosas entre nosotros hayan tomado un giro radical e inesperado, pero estoy seguro de que tu futuro sera brillante. Sigue creando recuerdos inolvidables, enfrentando desafíos, aprendiendo de tus errores para no volver a cometerlos y celebrando victorias. Apesar de las circunstancias siempre estaré aquí para apoyarte y aconsejarte en cada paso del camino... 🌟
+                </div>
+              </div>
+            </div>
+      </div>
+    </div>
+
+    <script>
+      // --- LÓGICA PARA EL REGALO Y FUEGOS ARTIFICIALES (SIN CAMBIOS) ---
+      let clickCount = 0;
+      const maxClicks = 6;
+      const giftImage = document.getElementById("giftImage");
+      const giftContainer = document.getElementById("giftContainer");
+      const mainContent = document.getElementById("mainContent");
+      const clickCounter = document.getElementById("clickCounter");
+
+      giftImage.addEventListener("click", function () {
+        clickCount++;
+        giftImage.classList.add("shake");
+        setTimeout(() => giftImage.classList.remove("shake"), 500);
+        const remaining = maxClicks - clickCount;
+        clickCounter.textContent =
+          remaining > 1
+            ? `¡Solo ${remaining} clics más!`
+            : remaining === 1
+            ? "¡Un último clic!"
+            : "¡Preparando la sorpresa! ✨";
+        if (clickCount >= maxClicks) {
+          setTimeout(() => {
+            createFireworks(30);
+            setTimeout(() => {
+              giftContainer.style.display = "none";
+              mainContent.style.display = "block";
+            }, 2500);
+          }, 500);
+        }
+      });
+
+      function createFireworks(count) {
+        const colors = ["#ff6b35", "#ffa726", "#ffb74d", "#ff8c42", "#d84315"]; // Colores naranja
+        const fireworksContainer = document.createElement("div");
+        fireworksContainer.className = "fireworks";
+        document.body.appendChild(fireworksContainer);
+        for (let i = 0; i < count; i++) {
+          setTimeout(() => {
+            const firework = document.createElement("div");
+            firework.className = "firework";
+            firework.style.left = `${Math.random() * 100}%`;
+            firework.style.background =
+              colors[Math.floor(Math.random() * colors.length)];
+            firework.style.animationDuration = `${Math.random() * 1 + 1.5}s`;
+            fireworksContainer.appendChild(firework);
+            setTimeout(() => firework.remove(), 2500);
+          }, i * 60);
+        }
+        setTimeout(() => fireworksContainer.remove(), 4000);
+      }
+
+      // --- NUEVA LÓGICA DEL REPRODUCTOR DE MÚSICA LOCAL ---
+      // --- ELEMENTOS DEL DOM ---
+      const audioPlayer = document.getElementById("audioPlayer");
+      const albumArt = document.getElementById("albumArt");
+      const songTitle = document.getElementById("songTitle");
+      const artistName = document.getElementById("artistName");
+      const playPauseBtn = document.getElementById("playPauseBtn");
+      const playIcon = document.getElementById("playIcon");
+      const pauseIcon = document.getElementById("pauseIcon");
+      const progressBar = document.getElementById("progressBar");
+      const progressContainer = document.getElementById("progressContainer");
+      const currentTimeEl = document.getElementById("currentTime");
+      const totalDurationEl = document.getElementById("totalDuration");
+      const volumeSlider = document.getElementById("volumeSlider");
+
+      let currentArtist = "";
+
+      // --- FUNCIÓN PRINCIPAL PARA REPRODUCIR CANCIÓN ---
+      function playSong(artist, title, songPath, artPath) {
+        // Asegurarse de que la canción de cumpleaños esté pausada
+          if (birthdayAudioPlayer && !birthdayAudioPlayer.paused) {
+              birthdayAudioPlayer.pause();
+              playBirthdaySongBtn.textContent = "🎉 ¡Toca para una sorpresa musical! 🎉";
+          }
+        currentArtist = artist;
+        audioPlayer.src = songPath;
+        audioPlayer.play();
+
+        document.body.className = `${artist}-theme`;
+        albumArt.src = artPath;
+        songTitle.textContent = title;
+        artistName.textContent = artist === "morat" ? "Morat" : "BLACKPINK";
+      }
+
+      // --- FUNCIÓN PARA FORMATEAR TIEMPO (ej: 125 segundos -> "2:05") ---
+      function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+      }
+
+      // --- ACTUALIZAR LA INTERFAZ (ICONO PLAY/PAUSE) ---
+      function updatePlayPauseIcon() {
+        if (audioPlayer.paused) {
+          playIcon.style.display = "block";
+          pauseIcon.style.display = "none";
+        } else {
+          playIcon.style.display = "none";
+          pauseIcon.style.display = "block";
+        }
+      }
+
+      // --- EVENT LISTENERS DEL AUDIO PLAYER ---
+
+      // Cuando la canción se está reproduciendo, actualiza la barra de progreso
+      audioPlayer.addEventListener("timeupdate", () => {
+        const { currentTime, duration } = audioPlayer;
+        const progressPercent = (currentTime / duration) * 100;
+        progressBar.style.width = `${progressPercent}%`;
+        currentTimeEl.textContent = formatTime(currentTime);
+      });
+
+      // Cuando los datos de la canción (como la duración) se cargan
+      audioPlayer.addEventListener("loadedmetadata", () => {
+        totalDurationEl.textContent = formatTime(audioPlayer.duration);
+      });
+
+      // Cuando la canción termina
+      audioPlayer.addEventListener("ended", () => {
+        document.body.className = "";
+        songTitle.textContent = "Elige otra canción";
+        artistName.textContent = "La música se ha detenido...";
+        updatePlayPauseIcon();
+      });
+
+      // Cuando el estado de reproducción cambia (play o pause)
+      audioPlayer.addEventListener("play", updatePlayPauseIcon);
+      audioPlayer.addEventListener("pause", updatePlayPauseIcon);
+
+      // --- EVENT LISTENERS DE LOS CONTROLES ---
+
+      // Click en el botón de Play/Pause
+      playPauseBtn.addEventListener("click", () => {
+        if (audioPlayer.src) {
+          // Solo funciona si hay una canción cargada
+          if (audioPlayer.paused) {
+            audioPlayer.play();
+          } else {
+            audioPlayer.pause();
+          }
+        }
+      });
+
+      // Click en la barra de progreso para adelantar/retroceder
+      progressContainer.addEventListener("click", (e) => {
+        if (audioPlayer.src) {
+          const width = progressContainer.clientWidth; // Ancho total de la barra
+          const clickX = e.offsetX; // Posición del clic dentro de la barra
+          const duration = audioPlayer.duration;
+          audioPlayer.currentTime = (clickX / width) * duration;
+        }
+      });
+
+      // Mover el slider del volumen
+      volumeSlider.addEventListener("input", (e) => {
+        audioPlayer.volume = e.target.value;
+      });
+      // --- NUEVA LÓGICA PARA EL BOTÓN DE CUMPLEAÑOS ---
+      const birthdayAudioPlayer = document.getElementById('birthdayAudioPlayer');
+      const playBirthdaySongBtn = document.getElementById('playBirthdaySongBtn');
+
+      playBirthdaySongBtn.addEventListener('click', () => {
+          // Si la canción de cumpleaños está sonando, la pausamos
+          if (!birthdayAudioPlayer.paused) {
+              birthdayAudioPlayer.pause();
+              playBirthdaySongBtn.textContent = "🎉 ¡Toca para una sorpresa musical! 🎉";
+              return;
+          }
+
+          // Si el reproductor principal está sonando, lo pausamos primero
+          if (!audioPlayer.paused) {
+              audioPlayer.pause();
+          }
+
+          // Reproducimos la canción de cumpleaños
+          birthdayAudioPlayer.currentTime = 0; // Reinicia por si se pausó a la mitad
+          birthdayAudioPlayer.play();
+          playBirthdaySongBtn.textContent = "❚❚ Pausar sorpresa";
+      });
+
+      // Para que el botón vuelva a su estado original cuando la canción termine
+      birthdayAudioPlayer.addEventListener('ended', () => {
+          playBirthdaySongBtn.textContent = "🎉 ¡Toca para una sorpresa musical! 🎉";
+      });
+      // --- LÓGICA DE LOS BOTONES DE MENSAJES (SIN CAMBIOS) ---
+      function toggleMessage(messageId) {
+        const message = document.getElementById(messageId);
+        document.querySelectorAll(".expandable-message").forEach((msg) => {
+          if (msg.id !== messageId) msg.style.display = "none";
+        });
+        message.style.display =
+          message.style.display === "block" ? "none" : "block";
+      }
+      
+    </script>
+  </body>
+</html>
